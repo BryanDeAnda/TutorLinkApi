@@ -1,8 +1,8 @@
 {
-    "name": "node-template",
+    "name": "user-management-yt",
     "version": "1.0.0",
     "type": "module",
-    "description": "Plantilla base para los proyectos desarrollados en el curso de Node.JS de la plataforma LearnThis Academy",
+    "description": "Aplicación para la gestión de usuarios de una aplicación web",
     "scripts": {
         "dev": "nodemon src/index.js",
         "start": "node src/index.js",
@@ -12,10 +12,21 @@
         "postinstall": "npm run prepare"
     },
     "author": {
-        "name": "LearnThis Academy",
-        "url": "https://learnthisacademy.com"
+        "name": "Bryan de anda"
     },
     "license": "MIT",
+    "dependencies": {
+        "@sinclair/typebox": "^0.33.17",
+        "ajv": "^8.17.1",
+        "ajv-errors": "^3.0.0",
+        "ajv-formats": "^3.0.1",
+        "bcrypt": "^5.1.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
+        "express": "^4.21.1",
+        "jose": "^5.9.6",
+        "mongoose": "^8.7.1"
+    },
     "devDependencies": {
         "eslint": "8.40.0",
         "eslint-config-prettier": "8.8.0",
@@ -25,11 +36,16 @@
         "eslint-plugin-promise": "6.1.1",
         "husky": "8.0.3",
         "lint-staged": "13.2.2",
-        "nodemon": "2.0.22",
+        "nodemon": "^3.1.7",
         "prettier": "2.8.8"
     },
     "imports": {
-        "#Lib/*": "./src/lib/*"
+        "#Config/*": "./src/config/*",
+        "#Constants/*": "./src/constants/*",
+        "#Controllers/*": "./src/controllers/*",
+        "#Dto/*": "./src/dto/*",
+        "#Routes/*": "./src/routes/*",
+        "#Schemas/*": "./src/schemas/*"
     },
     "lint-staged": {
         "*.js": "eslint --fix",
