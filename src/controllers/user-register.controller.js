@@ -13,11 +13,9 @@ const userRegisterController = async (req, res) => {
 
     const existingUserByEmail = await UserModel.findOne({ email }).exec();
     if (existingUserByEmail)
-        return res
-            .status(409)
-            .send({
-                errors: ['Ya existe un usuario con ese email registrado'],
-            });
+        return res.status(409).send({
+            errors: ['Ya existe un usuario con ese email registrado'],
+        });
 
     const hashedPassword = await hash(password, SALT);
     const user = new UserModel({

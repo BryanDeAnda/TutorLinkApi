@@ -10,12 +10,24 @@ import Ajv from 'ajv';
 import addErrors from 'ajv-errors';
 import addFormats from 'ajv-formats';
 
+// Agregar la validación para el dominio específico de correo
+const emailDTOSchemaWithDomain = Type.String({
+    format: 'email',
+    pattern: '^[a-zA-Z0-9._%+-]+@alumnos\\.udg\\.mx$', // Solo permite correos de @alumnos.udg.mx
+    errorMessage: {
+        type: 'El tipo del email no es válido, debe ser un string',
+        format: 'El formato del email no es válido, debe cumplir el RFC 5322',
+        pattern:
+            'El correo electrónico debe ser de la institución @alumnos.udg.mx',
+    },
+});
+
 const RegisterDTOSchema = Type.Object(
     {
         _id: idDTOSchema,
         name: nameDTOSchema,
         surname: surnameDTOSchema,
-        email: emailDTOSchema,
+        email: emailDTOSchemaWithDomain, // Usamos la nueva validación para el email
         password: passwordDTOSchema,
     },
     {
