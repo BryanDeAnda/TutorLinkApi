@@ -5,28 +5,55 @@ import { SignJWT } from 'jose';
 const userLoginController = async (req, res) => {
     const { email, password } = req.body;
 
-    const existingUserByEmail = await UserModel.findOne({ email }).exec();
-    if (!existingUserByEmail)
-        return res.status(401).send({ errors: ['Credenciales incorrectas'] });
+    try {
+        // Verificar si el usuario existe por email
+        const existingUserByEmail = await UserModel.findOne({ email }).exec();
+        if (!existingUserByEmail) {
+            return res
+                .status(401)
+                .send({ errors: ['Credenciales incorrectas'] });
+        }
 
-    const checkPassword = await compare(password, existingUserByEmail.password);
+        // Verificar si el correo ha sido validado
+        if (!existingUserByEmail.isEmailVerified) {
+            return res.status(403).send({
+                errors: [
+                    'Por favor verifica tu correo electrónico antes de iniciar sesión.',
+                ],
+            });
+        }
 
-    if (!checkPassword)
-        return res.status(401).send({ errors: ['Credenciales incorrectas'] });
+        // Verificar la contraseña
+        const checkPassword = await compare(
+            password,
+            existingUserByEmail.password
+        );
+        if (!checkPassword) {
+            return res
+                .status(401)
+                .send({ errors: ['Credenciales incorrectas'] });
+        }
 
-    const jwtConstructor = new SignJWT({ id: existingUserByEmail._id });
+        // Generar el token JWT
+        const jwtConstructor = new SignJWT({ id: existingUserByEmail._id });
+        const encoder = new TextEncoder();
+        const jwt = await jwtConstructor
+            .setProtectedHeader({
+                alg: 'HS256',
+                typ: 'JWT',
+            })
+            .setIssuedAt()
+            .setExpirationTime('7d')
+            .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
 
-    const encoder = new TextEncoder();
-    const jwt = await jwtConstructor
-        .setProtectedHeader({
-            alg: 'HS256',
-            typ: 'JWT',
-        })
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
-
-    return res.send({ jwt });
+        // Enviar el JWT al cliente
+        return res.send({ jwt });
+    } catch (error) {
+        console.error('Error en el inicio de sesión:', error);
+        return res
+            .status(500)
+            .send({ errors: ['Error interno del servidor.'] });
+    }
 };
 
 export default userLoginController;
