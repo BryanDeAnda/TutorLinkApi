@@ -8,6 +8,7 @@ const bootstrap = async () => {
     httpServer.listen(process.env.PORT, () => {
         console.log(`Servidor escuchando en el puerto ${process.env.PORT}`);
     });
-};
+}; 
+
 
 bootstrap();
